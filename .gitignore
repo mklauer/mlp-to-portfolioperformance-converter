@@ -1,1 +1,5 @@
-testData/
+testData
+codebuddy
+.idea
+.vscode
+
