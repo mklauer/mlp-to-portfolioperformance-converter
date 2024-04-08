@@ -40,6 +40,8 @@ def convert_to_german_number(number_string):
         return locale.format_string('%.2f', number, grouping=True)
     return number_string
 
+def is_positive(german_number_string):
+    return not german_number_string.strip().startswith("-") 
 
 def search_header(csv_file):
     """Search for header in the CSV file"""
@@ -78,7 +80,7 @@ def process_transactions(transaction_reader, transaction_writer, header_offset):
         out_dict = {'Datum': row['Valuta'], 'Wert': umsatz, 'Buchungswährung': 'EUR'}
 
         subject_str = row['Vorgang/Verwendungszweck']
-        memo_processor = MemoProcessor(subject_str, rows_read)
+        memo_processor = MemoProcessor(subject_str, rows_read, is_positive(umsatz))
         
         type = CATEGORY_TO_TYPE.get(row.get('Category'))
         if type is not None:
@@ -89,7 +91,7 @@ def process_transactions(transaction_reader, transaction_writer, header_offset):
 
             if processed_dict == {}:
                 
-                processed_dict['Typ'] = 'Entnahme' if "-" in umsatz else 'Einlage'
+                processed_dict['Typ'] = 'Entnahme' if is_positive(umsatz) else 'Einlage'
                 processed_dict['Notiz'] = memo_processor.note 
             
             out_dict.update(processed_dict)

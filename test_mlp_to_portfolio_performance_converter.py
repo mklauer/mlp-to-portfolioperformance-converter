@@ -22,6 +22,13 @@ class TestMppc(unittest.TestCase):
         self.assertEqual(mppc.convert_to_german_number("-600.00"), "-600,00")
         self.assertEqual(mppc.convert_to_german_number("-99.87"), "-99,87")
 
+    def test_is_string_of_positive_number(self):
+        self.assertTrue(mppc.is_positive("1.000,00"))
+        self.assertTrue(mppc.is_positive("1.000"))
+        self.assertTrue(mppc.is_positive("1.000,-"))
+        self.assertFalse(mppc.is_positive("-99,99"))
+        self.assertFalse(mppc.is_positive("  -99,99"))
+        
     def test_search_header(self):
         with patch("builtins.print") as mock_print:
             with self.assertRaises(SystemExit):

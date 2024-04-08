@@ -18,11 +18,12 @@ fee_re = re.compile(r'ENTGELT\s*')
 
 class MemoProcessor:
 
-    def __init__(self, memo, line_no='0'):
+    def __init__(self, memo, line_no='0', is_credit=False):
         self.memo = memo
         line_breaks_removed = re.sub('\n\s*', '', memo)
         self.note = re.sub('\s+', ' ', line_breaks_removed)
         self.line_no = str(line_no)
+        self.is_credit = is_credit
 
 
     def process(self):
@@ -44,7 +45,7 @@ class MemoProcessor:
             out_dict['Steuern'] = str(self.find_taxes()).replace('.', ',')
             out_dict['Wertpapiername'] = self.find_stock_name()
 
-        elif 'WERTPAPIERABRECHNUNG' in self.memo and 'VERKAUF' in self.memo or 'WERTPAPIERVERKAUF' in self.memo:
+        elif 'WERTPAPIERABRECHNUNG' in self.memo and self.is_credit:
             pieces = self.find_pieces()
             if pieces == "":
                 self.print_warning("Could not find number of pieces in line ")
