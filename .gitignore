@@ -3,3 +3,4 @@ codebuddy
 .idea
 .vscode
 
+__pycache__
