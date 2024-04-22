@@ -7,8 +7,8 @@ class TestMemoProcessor(unittest.TestCase):
 
     def test_process_depotentgelt(self):
         processor = MemoProcessor(
-            "0008 DEPOTENTGELT 26259318 Q1/2021 DEPOT 8507908370 UST-ID            DE143449956 NETTO 12,24EUR 19%     "
-            "UST. 2,33EUR")
+            '0008 DEPOTENTGELT 26259318 Q1/2021 DEPOT 8507908370 UST-ID            DE143449956 NETTO 12,24EUR 19%     '
+            'UST. 2,33EUR')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Gebühren')
         self.assertEqual(result['Notiz'],
@@ -17,9 +17,9 @@ class TestMemoProcessor(unittest.TestCase):
 
     def test_process_wertpapierverkauf(self):
         processor = MemoProcessor(
-            "WERTPAPIERABRECHNUNG VERKAUF WKN   A1J3M4 / LU0728929174 ASSCVI-WLD   SM.COMP. AAEO DEPOTNR.: 8507908370 "
-            "HANDELSTAG 06.04.2021              MENGE 15,2580 KUR                  S 27,12610000                      "
-            "AUFTRAGSNR. 7612487000",
+            'WERTPAPIERABRECHNUNG VERKAUF WKN   A1J3M4 / LU0728929174 ASSCVI-WLD   SM.COMP. AAEO DEPOTNR.: 8507908370 '
+            'HANDELSTAG 06.04.2021              MENGE 15,2580 KUR                  S 27,12610000                      '
+            'AUFTRAGSNR. 7612487000',
             is_credit=True)
         result = processor.process()
         self.assertEqual(result['Typ'], 'Verkauf')
@@ -29,7 +29,7 @@ class TestMemoProcessor(unittest.TestCase):
         self.assertEqual(result['Wertpapiername'], 'ASSCVI-WLD SM.COMP. AAEO')
 
     def test_process_wertpapierverkauf_old(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
             DEPOT    8505581964 
             WERTPAPIERABRECHNUNG 
             DEPOT-NR       8505581964 
@@ -41,7 +41,7 @@ class TestMemoProcessor(unittest.TestCase):
             ZAST/KAPST            0,17 
             SOLZ            0,01 
             AUFTR.-NR.  000001796491800
-            """, is_credit=True)
+            ''', is_credit=True)
         result = processor.process()
         self.assertEqual(result['Typ'], 'Verkauf')
         self.assertEqual(result['Stück'], '0,8830')
@@ -51,17 +51,17 @@ class TestMemoProcessor(unittest.TestCase):
 
     def test_process_dividend(self):
         processor = MemoProcessor(
-            "WP- ERTRÄGNISGUTSCHRIFT             INVESTMENTFONDS WKN A0M430 /       LU0323578657                      "
-            " FLOSSB.V.STORCH-MUL.OPP.R          DEPOTNR.: 8507908370 MENGE         1,7540 ABRECHN.NR. 84724240680")
+            'WP- ERTRÄGNISGUTSCHRIFT             INVESTMENTFONDS WKN A0M430 /       LU0323578657                      '
+            ' FLOSSB.V.STORCH-MUL.OPP.R          DEPOTNR.: 8507908370 MENGE         1,7540 ABRECHN.NR. 84724240680')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Dividende')
 
     def test_process_steuerrueckzahlung(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
                                   GUTSCHRIFT: 
                                   STEUERAUSGLEICH 
                                   KAP.STEUER 3,86 EURO
-                                  """)
+                                  ''')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Steuerrückerstattung')
         self.assertEqual(
@@ -81,11 +81,11 @@ class TestMemoProcessor(unittest.TestCase):
                                   '11KIST                  0,16ABRECHN.NR. 51264614230')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Steuern')
-        self.assertEqual(result['Steuern'], "2,24")
+        self.assertEqual(result['Steuern'], '2,24')
         self.assertEqual(result['Wertpapiername'], 'MORGAN STAN.I-GL.OPP.ADL')
 
     def test_process_effektengutschrift(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
             EFFEKTENGUTSCHRIFT
             WP-ERTRï¿½GNISGUTSCHRIFT
             INVESTMENTFONDS
@@ -97,12 +97,23 @@ class TestMemoProcessor(unittest.TestCase):
             SOLZ             2,35
             KIST             1,70
             ABRECHN.NR.     57849107710
-            """)
+            ''')
         result = processor.process()
-        self.assertEqual(result['Typ'], 'Dividende')
+        self.assertEqual(result.get('Typ'), 'Dividende')
+        self.assertEqual(result.get('Stück'), '73,2960')
+        self.assertEqual(result.get('Steuern'), '46,93')
 
+    def test_process_effektengutschrift_one_line(self):
+        processor = MemoProcessor('WP- ERTRÄGNISGUTSCHRIFT INVESTMENTFONDSWKN A0LHCM /'
+                                  'LU0278152516ACATIS F.V.M.VERMOEG.1 ADEPOTNR.: 8505581964'
+                                  'MENGE 73,2960KAPST 42,88SOLZ 2,35KIST 1,70ABRECHN.NR. 57849107710')
+        result = processor.process()
+        self.assertEqual(result.get('Typ'), 'Dividende')
+        self.assertEqual(result.get('Stück'), '73,2960')
+        self.assertEqual(result.get('Steuern'), '46,93')
+            
     def test_process_wertpapierkauf(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
             EFFEKTEN
             WERTPAPIERABRECHNUNG
             KAUF
@@ -114,25 +125,28 @@ class TestMemoProcessor(unittest.TestCase):
             KURS       59,87000000
             DEVISENKURS       1,0870000
             AUFTRAGSNR.      7498553600
-            """)
+            ''')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Kauf')
 
     def test_process_erstattung_vertriebsfolgeprovision(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
                 GUTSCHRIFT
                 0060 ERSTATTUNG VERTRIEBSFO
                 LGEPROVISION/BESTANDSPROVIS
                 ION 58384158 Q1/2024 DEPOT
                 8507908370 EREF: VFP 2024 Q
                 UARTAL I
-                """)
+                ''')
         result = processor.process()
         self.assertEqual(result['Typ'], 'Gebührenerstattung')
         self.assertEqual(result['Notiz'], 'Erstattung Vertriebsfolgeprovision')
 
     def test_process_wertpapierabrechnung_kauf_old(self):
-        processor = MemoProcessor('DEPOT    8505581964                WERTPAPIERABRECHNUNG               DEPOT-NR       8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2          HANDELSTAG       15.09.2014        MENGE                0,5050        KURS            98,94000000        AUFTR.-NR.  000001814863300')
+        processor = MemoProcessor('DEPOT    8505581964                WERTPAPIERABRECHNUNG               DEPOT-NR     '
+                                  '  8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2 '
+                                  '         HANDELSTAG       15.09.2014        MENGE                0,5050        '
+                                  'KURS            98,94000000        AUFTR.-NR.  000001814863300')
         result = processor.process()
         self.assertEqual(result.get('Typ'), 'Kauf')
         self.assertEqual(result.get('Stück'), '0,5050')
@@ -142,7 +156,10 @@ class TestMemoProcessor(unittest.TestCase):
                          'FRANKF.AKTIENFO.F.STIFT.T')
 
     def test_process_dividende_old(self):
-        processor = MemoProcessor('DEPOT     8505581964               WP-ERTRÄGNISGUTSCHRIFT             DEPOT-NR       8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2          ABRECHNUNGSTAG   02.10.2014        MENGE                0,5050        AUFTR.-NR.  000077508075250')
+        processor = MemoProcessor('DEPOT     8505581964               WP-ERTRÄGNISGUTSCHRIFT             DEPOT-NR     '
+                                  '  8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2 '
+                                  '         ABRECHNUNGSTAG   02.10.2014        MENGE                0,5050        '
+                                  'AUFTR.-NR.  000077508075250')
         result = processor.process()
         self.assertEqual(result.get('Typ'), 'Dividende')
         self.assertEqual(result.get('Stück'), '0,5050')
@@ -151,55 +168,71 @@ class TestMemoProcessor(unittest.TestCase):
         self.assertEqual(result.get('Wertpapiername'),
                          'FRANKF.AKTIENFO.F.STIFT.T')
 
+    def test_process_retoure_shall_not_be_processed(self):
+        processor = MemoProcessor('Retoure SEPA Lastschrift vom 02.10.2017, Rueckgabegrund: AC06 Konto gesperrt SVWZ: '
+                                  'RETURN/REFUND, 3702517 VERMOEGENSDEPOT SAMMELBUCHUNG SPARPLAN WKN A0M430, 974968, '
+                                  'A0M8HD A0RB8A, 847811, 984811 u.a. EREF: SPARSP 2802474 ENTG: 3,00 EUR SEPA '
+                                  'Basislastschrift Rücklas     EREF+SPARSP 2802474        MREF+WPBF0000017817 [MLP '
+                                  'Vermögensdepot Konto] Retoure SEPA Lastschrift vom 02.10.2017, Rueckgabegrun -4,'
+                                  '500.00 -  Depotkosten:Orderstreichung -3.00 - ',
+                                  is_credit=False)
+        result = processor.process()
+        self.assertEqual(result.get('Typ'), 'Entnahme')
+
     def test_find_pieces(self):
-        processor = MemoProcessor("MENGE 10")
+        processor = MemoProcessor('MENGE 10')
         result = processor.find_pieces()
-        self.assertEqual(result, "10")
+        self.assertEqual(result, '10')
 
     def test_find_wkn(self):
-        processor = MemoProcessor("WKN 123456 /")
+        processor = MemoProcessor('WKN 123456 /')
         result = processor.find_wkn()
-        self.assertEqual(result, "123456")
+        self.assertEqual(result, '123456')
 
     def test_find_isin(self):
-        processor = MemoProcessor("WKN 123456 / LU1234567890")
+        processor = MemoProcessor('WKN 123456 / LU1234567890')
         result = processor.find_isin()
-        self.assertEqual(result, "LU1234567890")
+        self.assertEqual(result, 'LU1234567890')
 
     def test_find_isin_steuerausgleich(self):
         processor = MemoProcessor(
-            'WERTPAPIERABRECHNUNG VERKAUF       STEUERAUSGLEICH WKN 974515 /       LU0087412390 DWS CON.DJE           ALP.REN.GL LC DEPOTNR.:            8505581964 HANDELSTAG 04.10.2018   MENGE 3,3940 KURS 121,57000000     AUFTRAGSNR. 2026035700')
+            'WERTPAPIERABRECHNUNG VERKAUF       STEUERAUSGLEICH WKN 974515 /       LU0087412390 DWS CON.DJE           '
+            'ALP.REN.GL LC DEPOTNR.:            8505581964 HANDELSTAG 04.10.2018   MENGE 3,3940 KURS 121,57000000     '
+            'AUFTRAGSNR. 2026035700')
         result = processor.find_isin()
         self.assertEqual(result, 'LU0087412390')
 
     def test_find_stock_name_with_spaces(self):
         processor = MemoProcessor(
-            "WKN 123456 / DE1234567890 ACATIS-GANE VAL.EV.F.UI A    DEPOT")
+            'WKN 123456 / DE1234567890 ACATIS-GANE VAL.EV.F.UI A    DEPOT')
         result = processor.find_stock_name()
-        self.assertEqual("Acatis Gané Value Event Fonds", result)
+        self.assertEqual('Acatis Gané Value Event Fonds', result)
 
     def test_find_stock_name_with_line_breaks(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
             WKN 123456 / US1234567890
             S&P 500 ETF
             DEPOT
-            """)
+            ''')
         result = processor.find_stock_name()
-        self.assertEqual("S&P 500 ETF", result)
+        self.assertEqual('S&P 500 ETF', result)
 
     def test_find_stock_name_old(self):
-        processor = MemoProcessor('DEPOT    8505581964                WERTPAPIERABRECHNUNG               DEPOT-NR       8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2          HANDELSTAG       15.09.2014        MENGE                0,5050        KURS            98,94000000        AUFTR.-NR.  000001814863300')
+        processor = MemoProcessor('DEPOT    8505581964                WERTPAPIERABRECHNUNG               DEPOT-NR     '
+                                  '  8505581964          FRANKF.AKTIENFO.F.STIFT.T          WKN A0M8HD / DE000A0M8HD2 '
+                                  '         HANDELSTAG       15.09.2014        MENGE                0,5050        '
+                                  'KURS            98,94000000        AUFTR.-NR.  000001814863300')
         result = processor.find_stock_name()
-        self.assertEqual("FRANKF.AKTIENFO.F.STIFT.T", result)
+        self.assertEqual('FRANKF.AKTIENFO.F.STIFT.T', result)
 
     def test_find_taxes(self):
-        processor = MemoProcessor("""
+        processor = MemoProcessor('''
             KAPST 10,00-
             SOLZ 5,00-
             KIST 2,00-
-            """)
+            ''')
         result = processor.find_taxes()
-        self.assertEqual(result, 17.0)
+        self.assertEqual(result, '17,0')
 
 
 if __name__ == '__main__':

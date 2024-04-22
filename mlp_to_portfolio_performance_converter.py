@@ -91,8 +91,8 @@ def process_transactions(transaction_reader, transaction_writer, header_offset):
 
             if processed_dict == {}:
                 
-                processed_dict['Typ'] = 'Entnahme' if is_positive(umsatz) else 'Einlage'
-                processed_dict['Notiz'] = memo_processor.note 
+                processed_dict['Typ'] = 'Einlage' if is_positive(umsatz) else 'Entnahme'
+                processed_dict['Notiz'] = memo_processor.note
             
             out_dict.update(processed_dict)
 

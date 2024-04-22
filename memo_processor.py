@@ -42,7 +42,7 @@ class MemoProcessor:
         elif 'VORABPAUSCHALE' in self.memo:
             out_dict['Typ'] = 'Steuern'
             out_dict['Stück'] = self.find_pieces()
-            out_dict['Steuern'] = str(self.find_taxes()).replace('.', ',')
+            out_dict['Steuern'] = self.find_taxes()
             out_dict['Wertpapiername'] = self.find_stock_name()
 
         elif 'WERTPAPIERABRECHNUNG' in self.memo and self.is_credit:
@@ -102,6 +102,7 @@ class MemoProcessor:
             out_dict['WKN'] = self.find_wkn()
             out_dict['ISIN'] = self.find_isin()
             out_dict['Wertpapiername'] = self.find_stock_name()
+            out_dict['Steuern'] = self.find_taxes()
 
         elif self.memo.find('DEPOTENTGELT') != -1:
             out_dict['Typ'] = 'Gebühren'
@@ -115,6 +116,9 @@ class MemoProcessor:
             if 'VERTRIEBSFOLGEPROVISION' in self.note:
                 out_dict['Typ'] = 'Gebührenerstattung'
                 out_dict['Notiz'] = 'Erstattung Vertriebsfolgeprovision'
+            elif 'Retoure' in self.note:
+                out_dict['Typ'] = 'Entnahme'
+                out_dict['Notiz'] = self.note
             else:
                 out_dict['Typ'] = 'Einlage'
                 out_dict['Notiz'] = self.note
@@ -249,5 +253,5 @@ class MemoProcessor:
         if matches:
             kist_str = matches.group(1)
             kist = float(kist_str.replace(',', '.'))
-
-        return kap + soli + kist
+        taxes = kap + soli + kist
+        return str(round(taxes, 2)).replace(".","," )
