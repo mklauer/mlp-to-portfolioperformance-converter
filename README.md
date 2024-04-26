@@ -14,22 +14,21 @@ A CSV file that can be imported by Portfolio Performance.
 
 Python 3.2 or higher
 
-## Instructions (English)
+## Instructions
 
 1. Install Python 3.2 or higher.
-2. Download the script and unpack it in any folder, for example `D:\temp`.
-3. Open the transactions of the clearing account in MLP Financepilot Banking. Set the desired time period. Export the data as CSV (top right, the icon above "Current") and save the file as `D:\temp\input.csv`.
-4. Press Windows key + R. Type in `cmd` and press Enter to open the command prompt.
-5. Navigate to `D:\temp` (type in `D:` then `cd temp`).
-6. Run the script with `python mlpToPortfolioPerformanceConverter.py input.csv`.
-7. Check the output for errors. If everything went smoothly, there should now be a file `D:\temp\output.csv` that can be imported into Portfolio Performance.
+2. Download the current release and extract it to a folder `C:\User\your_name\mlp-to-portfolioperformance-converter`
+3. Open the transactions of the clearing account in MLP Financepilot Banking. Set the desired time period. Export the data as CSV (top right, the icon above "Current") and save the file as `C:\User\your_name\Downloads\Umsaetze.csv`.
+4. Press Windows key + X.
+5. Select Windows PowerShell
+5. Navigate to `cd C:\User\your_name\mlp-to-portfolioperformance-converter`.
+6. Run the script with `python mlp_to_portfolio_performance_converter.py ~\Downloads\Umsaetze.csv`.
+7. Check the output for errors. If everything went smoothly, there should now be a file `~\Downloads\Umsaetze_converted` that can be imported into Portfolio Performance.
 
-## Anleitung (Deutsch)
+## Contribution
 
-1. Python 3.2 installieren. Das bekommt man [hier](https://www.python.org/downloads/). Bei der Installation “Add Python 3.2 to PATH” aktivieren.
-2. Das Skript [herunterladen](https://github.com/mklauer/mlp-to-portfolioperformance-converter) und in einem beliebigem Ordner entpacken. Sagen wir der Ordner heißt D:\temp.
-3. Im MLP Financepilot Banking die Umsätze des Verrechnungskontos öffene. Den gewünschten Zeitraum einstellen. Daten als CSV exportieren (rechts oben, das Symbol über “Aktuelles”) und die Datei speichern unter D:\temp\input.csv.
-4. Windows-Taste+R drücken. `cmd` eingeben. Enter drücken. Die Eingabeaufforderung sollte sich öffnen.
-5. Nach D:\temp wechseln (also D: eingeben, dann `cd temp`).
-6. Das Skript ausführen mit `python mlpToPortfolioPerformanceConverter.py input.csv`.
-7. Ausgabe auf Fehler überprüfen. Wenn alles glatt lief, sollte es jetzt eine Datei D:\temp\output.csv geben, die man in Portfolio Performance importieren kann.
+Fork the repository and clone it your local drive. 
+Open the folder in an IDE of your choice. 
+I recommend PyCharm or VSCode.
+This repository has unit tests `test_*`. Run these to ensure that you don't break existing features.
+Idealy add tests that are testing your new feature.
