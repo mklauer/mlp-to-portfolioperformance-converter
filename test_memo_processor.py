@@ -125,7 +125,7 @@ class TestMemoProcessor(unittest.TestCase):
             KURS       59,87000000
             DEVISENKURS       1,0870000
             AUFTRAGSNR.      7498553600
-            ''')
+            ''', True)
         result = processor.process()
         self.assertEqual(result['Typ'], 'Kauf')
 

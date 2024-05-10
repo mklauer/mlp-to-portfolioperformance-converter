@@ -4,3 +4,4 @@ codebuddy
 .vscode
 
 __pycache__
+.embeddings.db

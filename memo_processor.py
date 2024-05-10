@@ -45,7 +45,7 @@ class MemoProcessor:
             out_dict['Steuern'] = self.find_taxes()
             out_dict['Wertpapiername'] = self.find_stock_name()
 
-        elif 'WERTPAPIERABRECHNUNG' in self.memo and self.is_credit:
+        elif 'WERTPAPIERABRECHNUNG' in self.memo and ('VERKAUF' in self.note  or 'DEPOT ' in self.note) and self.is_credit:
             pieces = self.find_pieces()
             if pieces == "":
                 self.print_warning("Could not find number of pieces in line ")
