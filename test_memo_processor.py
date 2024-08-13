@@ -1,4 +1,3 @@
-from types import MethodType
 import unittest
 
 from memo_processor import MemoProcessor
