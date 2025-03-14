@@ -56,7 +56,7 @@ def search_header(csv_file):
     for line in csv_file:
         header_line_no += 1
         line = line.strip().replace('"', "").split(";")
-        if "Buchungstag" in line and "Umsatz" in line:
+        if "Buchungstag" in line and "Betrag" in line:
             found_header = line
             break
         if header_line_no >= 20:
@@ -81,14 +81,14 @@ def process_transactions(transaction_reader, transaction_writer, header_offset):
         if row.get("Kundenreferenz") in ["Anfangssaldo", "Endsaldo"]:
             continue
 
-        umsatz = convert_to_german_number(row["Umsatz"])
+        umsatz = convert_to_german_number(row["Betrag"])
         out_dict = {
             "Datum": row["Buchungstag"],
             "Wert": umsatz,
             "Buchungswährung": "EUR",
         }
 
-        subject_str = row["Vorgang/Verwendungszweck"]
+        subject_str = row["Verwendungszweck"]
         memo_processor = MemoProcessor(subject_str, rows_read, is_positive(umsatz))
 
         type = CATEGORY_TO_TYPE.get(row.get("Category"))
