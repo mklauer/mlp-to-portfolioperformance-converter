@@ -124,6 +124,7 @@ class TestMemoProcessor(unittest.TestCase):
         self.assertEqual(result["Typ"], "Steuern")
         self.assertEqual(result["Steuern"], "2,24")
         self.assertEqual(result["Wertpapiername"], "MORGAN STAN.I-GL.OPP.ADL")
+        self.assertEqual(result.get("WKN"), "A1H6XK")
 
     def test_process_effektengutschrift(self):
         processor = MemoProcessor("""

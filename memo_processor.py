@@ -47,6 +47,7 @@ class MemoProcessor:
             out_dict["Stück"] = self.find_pieces()
             out_dict["Steuern"] = self.find_taxes()
             out_dict["Wertpapiername"] = self.find_stock_name()
+            out_dict["WKN"] = self.find_wkn()
 
         elif (
             "WERTPAPIERABRECHNUNG" in self.memo
