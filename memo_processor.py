@@ -35,7 +35,7 @@ class MemoProcessor:
                 out_dict["Notiz"] = "Sparplan"
             out_dict["Typ"] = "Einlage"
 
-        elif "STEUERAUSGLEICH" in self.note:
+        elif "STEUERAUSGLEICH" in self.note or "Steuererstattung" in self.note:
             out_dict["Notiz"] = self.note
             if "STORNO" in self.note:
                 out_dict["Typ"] = "Steuern"

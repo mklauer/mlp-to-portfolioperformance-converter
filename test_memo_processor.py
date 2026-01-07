@@ -103,6 +103,14 @@ class TestMemoProcessor(unittest.TestCase):
         result = processor.process()
         self.assertEqual(result.get("Typ"), "Steuern")
 
+    def test_process_steuererstattung(self):
+        processor = MemoProcessor("Steuererstattung Kirchenst.Steuerausgleich")
+        result = processor.process()
+        self.assertEqual(result["Typ"], "Steuerrückerstattung")
+        self.assertEqual(
+            result["Notiz"], "Steuererstattung Kirchenst.Steuerausgleich"
+        )
+
     def test_process_steuerbelastung(self):
         processor = MemoProcessor(
             "Steuerbelastung Kap.Steuer         Rückzahlung Bestandsprovisionen"
