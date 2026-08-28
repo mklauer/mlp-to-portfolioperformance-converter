@@ -10,11 +10,16 @@ Output: A CSV file that can be imported by Portfolio Performance.
 import argparse  # command line arguments parser
 import csv
 import fileinput
-import locale
 import os
-import re
 import sys
 
+from common import (
+    convert_to_german_number,
+    find_header,
+    is_positive,
+    opening_hook_csv,
+    print_message,
+)
 from memo_processor import MemoProcessor
 
 CATEGORY_TO_TYPE = {
@@ -24,50 +29,9 @@ CATEGORY_TO_TYPE = {
 }
 
 
-def opening_hook_csv(filename, mode):
-    """CSV opening hook for the fileinput.input() function."""
-    return open(filename, mode, newline="", encoding="iso-8859-1")
-
-
-def print_message(text, color_code):
-    """Print a colored message to stdout"""
-    print(f"\033[{color_code}m{text}\033[0m")
-
-
-def convert_to_german_number(number_string):
-    """Convert English number string to German format"""
-    pattern = r"^-*[,\d]+\.\d{2}$"
-    if re.match(pattern, number_string):
-        number = float(number_string.replace(",", ""))
-        locale.setlocale(locale.LC_ALL, "de_DE")
-        return locale.format_string("%.2f", number, grouping=True)
-    return number_string
-
-
-def is_positive(german_number_string):
-    return not german_number_string.strip().startswith("-")
-
-
 def search_header(csv_file):
     """Search for header in the CSV file"""
-    header_line_no = 0
-    found_header = None
-
-    for line in csv_file:
-        header_line_no += 1
-        line = line.strip().replace('"', "").split(";")
-        if "Buchungstag" in line and "Betrag" in line:
-            found_header = line
-            break
-        if header_line_no >= 20:
-            print_message("Error: Header not found in the first 20 lines", 31)
-            sys.exit(1)
-
-    if found_header is None:
-        print_message("Error: Header not found in the file", 31)
-        sys.exit(1)
-
-    return found_header, header_line_no
+    return find_header(csv_file, ["Buchungstag", "Betrag"])
 
 
 def process_transactions(transaction_reader, transaction_writer, header_offset):
