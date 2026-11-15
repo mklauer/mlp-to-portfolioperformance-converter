@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from memo_processor import MemoProcessor
 
@@ -196,6 +197,15 @@ class TestMemoProcessor(unittest.TestCase):
         result = processor.process()
         self.assertEqual(result["Typ"], "Gebührenerstattung")
         self.assertEqual(result["Notiz"], "Erstattung Vertriebsfolgeprovision")
+
+    def test_process_geldanlage(self):
+        processor = MemoProcessor("Geldanlage", line_no=3, is_credit=True)
+        with patch("builtins.print") as mock_print:
+            result = processor.process()
+
+        self.assertEqual(result["Typ"], "Einlage")
+        self.assertEqual(result["Notiz"], "Geldanlage")
+        mock_print.assert_not_called()
 
     def test_process_wertpapierabrechnung_kauf_old(self):
         processor = MemoProcessor(
