@@ -39,12 +39,12 @@ class TestMppc(unittest.TestCase):
                 "\033[31mError: Header not found in the first 20 lines\033[0m"
             )
 
-        header, line_no = mppc.search_header(["Buchungstag;Umsatz"])
-        self.assertEqual(header, ["Buchungstag", "Umsatz"])
+        header, line_no = mppc.search_header(["Buchungstag;Betrag"])
+        self.assertEqual(header, ["Buchungstag", "Betrag"])
         self.assertEqual(line_no, 1)
 
-        header, line_no = mppc.search_header(["test"] * 2 + ["Buchungstag;Umsatz"])
-        self.assertEqual(header, ["Buchungstag", "Umsatz"])
+        header, line_no = mppc.search_header(["test"] * 2 + ["Buchungstag;Betrag"])
+        self.assertEqual(header, ["Buchungstag", "Betrag"])
         self.assertEqual(line_no, 3)
 
     @patch("os.path.exists", return_value=False)
