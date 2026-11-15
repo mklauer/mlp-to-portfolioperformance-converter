@@ -21,8 +21,8 @@ fee_re = re.compile(r"ENTGELT\s*")
 class MemoProcessor:
     def __init__(self, memo, line_no="0", is_credit=False):
         self.memo = memo
-        line_breaks_removed = re.sub("\n\s*", "", memo)
-        self.note = re.sub("\s+", " ", line_breaks_removed)
+        line_breaks_removed = re.sub(r"\n\s*", "", memo)
+        self.note = re.sub(r"\s+", " ", line_breaks_removed)
         self.line_no = str(line_no)
         self.is_credit = is_credit
 
